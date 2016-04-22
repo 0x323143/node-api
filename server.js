@@ -17,8 +17,10 @@ app.use(bodyParser.json());
 var port     = process.env.PORT || 8080; // set our port
 
 var mongoose   = require('mongoose');
-mongoose.connect('mongodb://node:node@novus.modulusmongo.net:27017/Iganiq8o'); // connect to our database
+mongoose.connect('mongodb://node:node@jello.modulusmongo.net:27017/emEvu7go');
+
 var Bear     = require('./app/models/bear');
+var Cat 		 = require('./app/models/cat');
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -35,7 +37,7 @@ router.use(function(req, res, next) {
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.get('/', function(req, res) {
-	res.json({ message: 'hooray! welcome to our api!' });	
+	res.json({ message: 'hooray! welcome to our api!' });
 });
 
 // on routes that end in /bears
@@ -44,18 +46,18 @@ router.route('/bears')
 
 	// create a bear (accessed at POST http://localhost:8080/bears)
 	.post(function(req, res) {
-		
+
 		var bear = new Bear();		// create a new instance of the Bear model
 		bear.name = req.body.name;  // set the bears name (comes from the request)
 
 		bear.save(function(err) {
-			if (err)
+			if (err) {
 				res.send(err);
-
-			res.json({ message: 'Bear created!' });
+			} else {
+				res.json({ message: 'Bear created!' });
+			}
 		});
 
-		
 	})
 
 	// get all the bears (accessed at GET http://localhost:8080/api/bears)
@@ -68,6 +70,33 @@ router.route('/bears')
 		});
 	});
 
+router.route('/cats')
+
+	.post(function(req, res) {
+
+		var kitty = new Cat();
+		kitty.name = req.body.name;
+
+		kitty.save(function (err) {
+			if (err) {
+				res.send(err)
+			} else {
+				res.json({ message: 'Cat created!' });
+			}
+		});
+
+	})
+
+	.get(function(req, res) {
+		Cat.find(function(err, cats) {
+			if (err) {
+				res.send(err);
+			} else {
+				res.json(cats);
+			}
+		});
+
+	});
 // on routes that end in /bears/:bear_id
 // ----------------------------------------------------
 router.route('/bears/:bear_id')
